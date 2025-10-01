@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'fek_api' => [
+        'base_url' => env('FEK_API_BASE_URL', 'https://api.fek.gov.gr'),
+        'token' => env('FEK_API_TOKEN', 'fake-token-for-testing'),
+    ],
+
 ];

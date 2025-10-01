@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../utils/api';
 import { formatCurrency, formatDateTime } from '../utils/helpers';
 import Loading from '../Components/Common/Loading';
 import Button from '../Components/Common/Button';
+import ReceiptPrint from '../Components/Common/ReceiptPrint';
 
 export default function Receipts() {
     const [receipts, setReceipts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedReceipt, setSelectedReceipt] = useState(null);
+    const [showPrintModal, setShowPrintModal] = useState(false);
     const [filters, setFilters] = useState({
         status: '',
         date_from: '',
@@ -23,13 +25,55 @@ export default function Receipts() {
         setLoading(true);
         try {
             const params = new URLSearchParams(filters);
-            const response = await api.get(`/api/receipts?${params}`);
-            setReceipts(response.data.data || []);
+            const response = await fetch(`/api/receipts/?${params.toString()}`, {
+                headers: {
+                    'Accept': 'application/json',
+                },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setReceipts(data.success ? data.data.data : []);
+            } else {
+                console.error('Failed to fetch receipts');
+                setReceipts([]);
+            }
         } catch (error) {
             console.error('Error loading receipts:', error);
+            setReceipts([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePrintReceipt = async (receiptId) => {
+        try {
+            const response = await fetch(`/api/receipts/${receiptId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    setSelectedReceipt(data.data);
+                    setShowPrintModal(true);
+                }
+            } else {
+                alert('Σφάλμα κατά τη φόρτωση της απόδειξης');
+            }
+        } catch (error) {
+            console.error('Error fetching receipt details:', error);
+            alert('Σφάλμα κατά τη φόρτωση της απόδειξης');
+        }
+    };
+
+    const handleClosePrintModal = () => {
+        setShowPrintModal(false);
+        setSelectedReceipt(null);
     };
 
     const handleFilterChange = (e) => {
@@ -141,12 +185,12 @@ export default function Receipts() {
                             {receipts.map((receipt) => (
                                 <tr key={receipt.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <Link
-                                            to={`/receipts/${receipt.id}`}
-                                            className="text-blue-600 hover:text-blue-800"
+                                        <button
+                                            onClick={() => handlePrintReceipt(receipt.id)}
+                                            className="text-blue-600 hover:text-blue-800 font-medium"
                                         >
                                             {receipt.receipt_number}
-                                        </Link>
+                                        </button>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {formatDateTime(receipt.created_at)}
@@ -172,20 +216,18 @@ export default function Receipts() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <Link
-                                            to={`/receipts/${receipt.id}`}
-                                            className="text-blue-600 hover:text-blue-800 mr-3"
+                                        <button
+                                            onClick={() => handlePrintReceipt(receipt.id)}
+                                            className="text-blue-600 hover:text-blue-800 mr-3 font-medium"
                                         >
-                                            Προβολή
-                                        </Link>
-                                        <a
-                                            href={`/receipts/${receipt.id}/print`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-green-600 hover:text-green-800"
+                                            👁️ Προβολή
+                                        </button>
+                                        <button
+                                            onClick={() => handlePrintReceipt(receipt.id)}
+                                            className="text-green-600 hover:text-green-800 font-medium"
                                         >
-                                            Εκτύπωση
-                                        </a>
+                                            🖨️ Εκτύπωση
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -198,6 +240,14 @@ export default function Receipts() {
                         </div>
                     )}
                 </div>
+            )}
+
+            {/* Print Modal */}
+            {showPrintModal && selectedReceipt && (
+                <ReceiptPrint
+                    receipt={selectedReceipt}
+                    onClose={handleClosePrintModal}
+                />
             )}
         </div>
     );

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Receipt;
 use App\Services\ReceiptService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReceiptController extends Controller
 {
@@ -42,7 +43,22 @@ public function show(Receipt $receipt)
     $receipt->load(['items.product', 'user', 'cancelledBy']);
 
     if (request()->wantsJson()) {
-        return response()->json(['success' => true, 'data' => $receipt]);
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $receipt->id,
+                'receipt_number' => $receipt->receipt_number,
+                'total_amount' => (float) $receipt->total_amount,
+                'discount' => (float) $receipt->discount,
+                'final_amount' => (float) $receipt->final_amount,
+                'status' => $receipt->status,
+                'created_at' => $receipt->created_at->toISOString(),
+                'user' => $receipt->user,
+                'items' => $receipt->items->map(function($item) {
+                    return $item->toFrontendFormat();
+                }),
+            ]
+        ]);
     }
 
     return view('receipts.show', compact('receipt'));
@@ -52,17 +68,22 @@ public function show(Receipt $receipt)
     {
         $validated = $request->validate([
             'items' => 'required|array|min:1',
-            'items.*.type' => 'required|in:fek,product',
+            'items.*.type' => 'required|in:fek,book,cd,product,other',
             'items.*.description' => 'required|string',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.total_price' => 'required|numeric|min:0',
-            'items.*.price_manually_adjusted' => 'boolean',
-            'items.*.fek_number' => 'required_if:items.*.type,fek',
-            'items.*.fek_type' => 'required_if:items.*.type,fek',
-            'items.*.fek_date' => 'required_if:items.*.type,fek|date',
-            'items.*.product_id' => 'required_if:items.*.type,product|exists:products,id',
+            'items.*.price_manually_adjusted' => 'nullable|boolean',
+            'items.*.fek_number' => 'nullable|string',
+            'items.*.fek_type' => 'nullable|string',
+            'items.*.fek_date' => 'nullable|date',
+            'items.*.fek_title' => 'nullable|string',
+            'items.*.total_pages' => 'nullable|integer',
+            'items.*.color_pages' => 'nullable|integer',
+            'items.*.maps_count' => 'nullable|integer',
+            'items.*.product_id' => 'nullable|exists:products,id',
             'discount' => 'nullable|numeric|min:0',
+            'customer' => 'nullable|array',
         ]);
 
         try {
@@ -74,7 +95,19 @@ public function show(Receipt $receipt)
             return response()->json([
                 'success' => true,
                 'message' => 'Η απόδειξη δημιουργήθηκε επιτυχώς',
-                'data' => $receipt
+                'data' => [
+                    'id' => $receipt->id,
+                    'receipt_number' => $receipt->receipt_number,
+                    'total_amount' => (float) $receipt->total_amount,
+                    'discount' => (float) $receipt->discount,
+                    'final_amount' => (float) $receipt->final_amount,
+                    'status' => $receipt->status,
+                    'created_at' => $receipt->created_at->toISOString(),
+                    'items' => $receipt->items->map(function($item) {
+                        return $item->toFrontendFormat();
+                    }),
+                    'customer' => $validated['customer'] ?? null,
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

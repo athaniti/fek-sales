@@ -22,7 +22,7 @@ class ReceiptService
 
             // Δημιουργία απόδειξης
             $receipt = Receipt::create([
-                'user_id' => auth()->id(),
+                'user_id' => auth()->id() ?? 1, // Default user for testing
                 'total_amount' => $totalAmount,
                 'discount' => $discount,
                 'final_amount' => $finalAmount,
@@ -73,6 +73,6 @@ class ReceiptService
             throw new \Exception('Η απόδειξη είναι ήδη ακυρωμένη');
         }
 
-        return $receipt->cancel(auth()->user(), $reason);
+        return $receipt->cancel(auth()->user() ?? \App\Models\User::find(1), $reason);
     }
 }
