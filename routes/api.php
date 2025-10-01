@@ -1,17 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{FekController, ReceiptController, ProductController, ReportController, DashboardController};
+use App\Http\Controllers\{FekController, ReceiptController, ProductController, ReportController, ReportExportController, DashboardController};
 
 Route::middleware('auth')->group(function () {
 
     // Products API
     Route::get('/products', [ProductController::class, 'index']);
-
-    // Reports API
-    Route::get('/reports/daily', [ReportController::class, 'daily']);
-    Route::get('/reports/monthly', [ReportController::class, 'monthly']);
-    Route::get('/reports/yearly', [ReportController::class, 'yearly']);
 });
 
 // Dashboard API - Temporary without auth for testing
@@ -26,6 +21,18 @@ Route::prefix('receipts')->group(function () {
     Route::get('/{receipt}', [ReceiptController::class, 'show']);
     Route::post('/', [ReceiptController::class, 'store']);
     Route::post('/{receipt}/cancel', [ReceiptController::class, 'cancel']);
+});
+
+// Reports API - Temporary without auth for testing
+Route::prefix('reports')->group(function () {
+    Route::get('/daily', [ReportController::class, 'daily']);
+    Route::get('/monthly', [ReportController::class, 'monthly']);
+    Route::get('/yearly', [ReportController::class, 'yearly']);
+
+    // Export routes
+    Route::get('/export/pdf', [ReportExportController::class, 'exportPdf']);
+    Route::get('/export/excel', [ReportExportController::class, 'exportExcel']);
+    Route::get('/export/pdf/preview', [ReportExportController::class, 'previewPdf']);
 });
 
 // FEK API - Temporary without auth for testing
