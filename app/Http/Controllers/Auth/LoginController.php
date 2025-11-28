@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -28,14 +29,18 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
+        Log::info('Login attempt', ['username' => $validated['username']]);
+
         // ΠΡΟΣΩΡΙΝΟ: Bypass για testing χωρίς LDAP
         // Για production, θα χρησιμοποιήσουμε LDAP
         if (config('app.env') === 'local') {
             $user = User::where('username', $validated['username'])->first();
+            Log::info('User found', ['user' => $user ? $user->username : 'none']);
 
             // Testing mode - accept password "test123" for any user
             if ($user && $validated['password'] === 'test123') {
                 if (!$user->is_active) {
+                    Log::warning('User inactive', ['username' => $user->username]);
                     return back()->withErrors([
                         'username' => 'Ο λογαριασμός σας είναι ανενεργός.',
                     ])->withInput($request->only('username'));
@@ -44,7 +49,11 @@ class LoginController extends Controller
                 Auth::login($user, $request->boolean('remember'));
                 $request->session()->regenerate();
 
+                Log::info('Login successful', ['username' => $user->username, 'redirect_to' => '/']);
+
                 return redirect()->intended('/');
+            } else {
+                Log::warning('Invalid credentials', ['username' => $validated['username']]);
             }
         }
 

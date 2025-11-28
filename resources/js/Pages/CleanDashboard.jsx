@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Dashboard() {
+export default function CleanDashboard() {
     const [stats, setStats] = useState({
         today_sales: 0,
         today_receipts: 0,
@@ -24,7 +24,7 @@ export default function Dashboard() {
             }
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
-            // Use fallback data
+            // Use fallback data if API fails
             setStats({
                 today_sales: 623.00,
                 today_receipts: 14,
@@ -56,9 +56,7 @@ export default function Dashboard() {
                 </button>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                {/* Today's Sales */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -75,7 +73,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Today's Receipts */}
                 <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -92,7 +89,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Today's FEK */}
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -109,7 +105,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Today's Products */}
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -127,7 +122,6 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Quick Actions */}
             <div className="bg-gray-50 rounded-lg p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">🚀 Γρήγορες Ενέργειες</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -5,6 +5,7 @@ use App\Models\Receipt;
 use App\Models\ReceiptItem;
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ReceiptService
 {
@@ -22,7 +23,7 @@ class ReceiptService
 
             // Δημιουργία απόδειξης
             $receipt = Receipt::create([
-                'user_id' => auth()->id() ?? 1, // Default user for testing
+                'user_id' => Auth::id() ?? 1, // Default user for testing
                 'total_amount' => $totalAmount,
                 'discount' => $discount,
                 'final_amount' => $finalAmount,
@@ -73,6 +74,6 @@ class ReceiptService
             throw new \Exception('Η απόδειξη είναι ήδη ακυρωμένη');
         }
 
-        return $receipt->cancel(auth()->user() ?? \App\Models\User::find(1), $reason);
+        return $receipt->cancel(Auth::user() ?? \App\Models\User::find(1), $reason);
     }
 }
