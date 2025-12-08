@@ -25,7 +25,7 @@ function ReceiptPrint({ receipt, onClose }) {
                 <div className="print:block hidden">
                     <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
                         <h1 className="text-2xl font-bold">ΕΘΝΙΚΟ ΤΥΠΟΓΡΑΦΕΙΟ</h1>
-                        <p className="text-lg">Σύστημα Πωλήσεων ΦΕΚ</p>
+                        <p className="text-lg">Εφαρμογή πωλήσεων ΕΤ</p>
                         <p className="text-sm">Καραολή & Δημητρίου 1, 10437 Αθήνα</p>
                         <p className="text-sm">ΤΗΛ: 210-5279000 | FAX: 210-5279054</p>
                     </div>

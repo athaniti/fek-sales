@@ -13,7 +13,7 @@
         <div class="bg-white p-8 rounded-lg shadow-lg w-96">
             <div class="text-center mb-8">
                 <h1 class="text-2xl font-bold text-blue-800">Εθνικό Τυπογραφείο</h1>
-                <p class="text-gray-600 mt-2">Σύστημα Πωλήσεων ΦΕΚ</p>
+                <p class="text-gray-600 mt-2">Εφαρμογή πωλήσεων ΕΤ</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}">

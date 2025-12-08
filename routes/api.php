@@ -40,7 +40,7 @@ Route::prefix('fek')->group(function () {
     Route::get('/search', [FekController::class, 'search']);
     Route::get('/details', [FekController::class, 'details']);
     Route::get('/test', function() {
-        return response()->json(['message' => 'FEK API is working', 'fake_data' => [
+        return response()->json(['message' => 'ΦΕΚ API is working', 'fake_data' => [
             ['id' => 'test_1', 'title' => 'Test ΦΕΚ'],
             ['id' => 'test_2', 'title' => 'Another Test ΦΕΚ']
         ]]);

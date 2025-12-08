@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>FEK Sales - Αναφορές</title>
+    <title>Εφαρμογή πωλήσεων ΕΤ - Αναφορές</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
         .header { background: #fff; shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem 0; margin-bottom: 2rem; }
@@ -31,7 +31,7 @@
 <body>
     <div class="header">
         <nav class="nav">
-            <div class="logo">📄 FEK Sales System</div>
+            <div class="logo">📄 Εφαρμογή πωλήσεων ΕΤ</div>
             <div class="nav-links">
                 <a href="/">🏠 Dashboard</a>
                 <a href="/receipts">📋 Αποδείξεις</a>
